@@ -84,6 +84,9 @@ The lead writes the brief, starts the tester, checks in every 2 minutes, reads t
 
 ## Known limits
 
+- **Cost.** A round costs about $1-2 on Opus. The lead uses Sonnet for simple read-only checks.
+- **Model fallback.** Safety filters sometimes flag browser-test briefs. The tester then switches to an older model and still finishes. Plain, user-level wording in briefs makes this rarer.
+
 - **Polling, not push.** The lead learns of completion up to about 2 minutes late.
 - **The tester computer must be awake** with the `remote-control` terminal running.
 - **Auto mode may still ask before some browser actions.** The settings allow-list covers Claude in Chrome tools, but Chrome may ask once per site.

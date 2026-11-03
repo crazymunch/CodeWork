@@ -43,9 +43,20 @@ Fill in [brief-template.md](brief-template.md) completely. A good brief:
 - states hard limits: no purchases, no sending email or messages, no deleting real data, unless the user explicitly allowed it in this conversation;
 - sets a timebox (default 10 minutes).
 
+**Wording.** Model safety filters can mistake browser-test briefs for security work and stop the tester. When that happens Claude Code switches the tester to an older model and it carries on, but the run takes longer and costs more. Describe what a user would see and do: "check the browser console for errors" and "note any requests that fail" rather than "intercept", "capture traffic", "bypass", "verify the device" or "session token". Don't ask the tester to probe auth, permissions or security behaviour. That's a different job, with its own authorisation.
+
 Pick a short run id, e.g. `bt-<yyyymmdd>-<hhmm>`, and put it in the brief and the tags.
 
-## 3. Start the tester
+## 3. Pick a model and start the tester
+
+A round costs roughly $1-2 on Opus: the tester loads a large toolset, then takes many small browser steps. Choose the tester's model by the job:
+
+| Job | `model` |
+|---|---|
+| Smoke checks: a page loads, an element or text is present, a short click-through of 3 steps or fewer, read-only | `claude-sonnet-5-5` |
+| Multi-step flows, forms, judging layout or behaviour, unclear pass criteria | omit (inherits the lead's model) |
+
+If a Sonnet run comes back `inconclusive`, or its observations look thin, re-run that round without `model`. Put the chosen model in your summary to the user.
 
 ```
 create_session(
@@ -53,6 +64,7 @@ create_session(
   title          = "Browser test: <goal, ≤6 words>",
   tags           = ["handoff:browser-test", "handoff:<run id>"],
   permission_mode = "auto",
+  model          = <from the table, or omit>,
   prompt         = <the filled brief>
 )
 ```
@@ -68,7 +80,7 @@ Tell the user in one line that the tester is running and which session title to 
 Start a background timer with the Bash tool and `run_in_background: true`:
 
 ```bash
-sleep 120; echo "check browser-test <run id>: tester session <id>"
+sleep 90; echo "check browser-test <run id>: tester session <id>"
 ```
 
 Then **end your turn**. When the command exits you are re-invoked, and its output reminds you which tester to check. Only if your harness has no background Bash, fall back to `send_later(delay_minutes = 2, …)`, which works only while the lead is **not** limited to trusted devices.
@@ -80,11 +92,11 @@ When it fires, call `get_session(<tester id>)` and look at `status_bucket`:
 | status_bucket | Do this |
 |---|---|
 | `completed` / `review_ready` | Go to step 5. |
-| `working` | Start another 2-minute timer, then end your turn. |
+| `working` | Start another 90-second timer, then end your turn. If `external_metadata.safety_stopped` is true, or `last_served_model` differs from the model you asked for, the tester was moved to a fallback model. It usually still finishes. Note it for your summary and keep waiting. |
 | `blocked` | Read `post_turn_summary.needs_action`. Tell the user what the tester is waiting for (usually a permission prompt or a login) and that they can answer it in the Claude app under the tester's title. Then start another timer and end your turn. |
 | `failed` | Read the last events (step 5) for the error, report it to the user, and stop. |
 
-Give up after the timebox plus 5 minutes. Tell the user, and leave the tester session alone.
+Rounds so far took 1-4 minutes. Give up after the timebox plus 5 minutes. Tell the user, and leave the tester session alone.
 
 ## 5. Read the report
 
@@ -95,7 +107,8 @@ Call `list_events(session_id = <tester id>, kinds = ["result"], limit = 100)`. T
 
 ## 6. Act, and maybe go again
 
-- Summarise for the user: verdict, failed steps, the most useful evidence (console errors, failing requests, exact on-screen text).
+- Summarise for the user: verdict, failed steps, the most useful evidence (console errors, failing requests, exact on-screen text), the model used and any fallback, and the cost. The cost is `total_cost_usd` on the same result event.
+- Ignore known noise, such as analytics or telemetry endpoints (`/rum`, `/collect`, `/analytics`) returning errors, unless the brief is about them.
 - If the work is yours to fix (code in this session), fix it, deploy or preview it the way the project does, then run **a new round**: back to step 2 with a fresh brief that says what changed and re-tests only what failed plus a short smoke check.
 - Stop after **3 rounds** without a pass and hand back to the user with what you learned.
 - Verdict `blocked` with reason `login` means the user must sign in to that site in their Chrome once. Ask them to, then start a new round.

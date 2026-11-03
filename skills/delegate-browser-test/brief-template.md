@@ -28,7 +28,7 @@ Sign-in needed: <no | yes, as <account/role>: use the existing Chrome sign-in, n
 - <observable criterion>
 
 ## Also capture
-- Console errors and failed network requests on each page.
+- Before step 1, check the browser console and recent requests once, so errors from the first page load are recorded. Then report console errors and requests that failed on each page.
 - <anything else: exact text of an error banner, a value in a table, …>
 
 ## Limits
