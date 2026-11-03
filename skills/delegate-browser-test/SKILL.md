@@ -71,6 +71,8 @@ sleep 120; echo "check browser-test <run id>: tester session <id>"
 
 Then **end your turn**. When the command exits you are re-invoked, and its output reminds you which tester to check. Only if your harness has no background Bash, fall back to `send_later(delay_minutes = 2, …)`, which works only while the lead is **not** limited to trusted devices.
 
+If your session is resumed or its worker restarts while you wait, the timer may be lost: check the tester right away and start a new timer if it is still working.
+
 When it fires, call `get_session(<tester id>)` and look at `status_bucket`:
 
 | status_bucket | Do this |
