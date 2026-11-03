@@ -25,7 +25,7 @@ If they are not available at all, stop and tell the user that this session canno
 Call `list_environments` and keep entries with `kind: "bridge"`. Their names look like `<host>:<user>:<id>`.
 
 - If there is exactly one, use it.
-- If there are several, prefer the one whose name the user gave you. Otherwise ask the user, naming them by host, never by id.
+- If there are several, prefer the one the user named, then one whose folder part is `claude-tester` (the tester workspace). Otherwise ask the user, naming them by host and folder, never by id.
 - If there are none, stop and tell the user to start the tester on their computer:
   ```bash
   cd ~/claude-tester && claude remote-control --chrome
