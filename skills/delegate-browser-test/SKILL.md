@@ -57,6 +57,8 @@ create_session(
 )
 ```
 
+If it is refused because `auto` requires the parent to be in auto mode, retry without `permission_mode`. The tester workspace's settings already pre-allow the Chrome tools.
+
 If the call is refused with `elevated_session_untrusted_device`, call `confirm_repository_trust` with the `content_digest` the refusal gives. The user approves this once, in person, and afterwards this session is limited to their trusted devices for good. Say that in one line, then retry `create_session`. If the user declines, stop.
 
 Tell the user in one line that the tester is running and which session title to open in the Claude app if they want to watch or answer a prompt.
