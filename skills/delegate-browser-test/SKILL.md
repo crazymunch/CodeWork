@@ -45,6 +45,8 @@ Fill in [brief-template.md](brief-template.md) completely. A good brief:
 
 **Wording.** Model safety filters can mistake browser-test briefs for security work and stop the tester. When that happens Claude Code switches the tester to an older model and it carries on, but the run takes longer and costs more. Describe what a user would see and do: "check the browser console for errors" and "note any requests that fail" rather than "intercept", "capture traffic", "bypass", "verify the device" or "session token". Don't ask the tester to probe auth, permissions or security behaviour. That's a different job, with its own authorisation.
 
+**Site permissions.** The Claude in Chrome extension grants permission per site, and it is separate from Claude Code's permissions. On a site it hasn't been allowed to act on, reading the page works but screenshots, clicks and scrolling fail with "Permission denied for this action on this domain". With nobody at Chrome to answer, the run is blocked. Before the **first** test on a domain, ask the user once to set every allowed domain (sign-in redirects such as `login.microsoftonline.com` included) to always allowed in the extension's site permissions. Keep a note of domains already confirmed this session.
+
 Pick a short run id, e.g. `bt-<yyyymmdd>-<hhmm>`, and put it in the brief and the tags.
 
 ## 3. Pick a model and start the tester
@@ -111,6 +113,7 @@ Call `list_events(session_id = <tester id>, kinds = ["result"], limit = 100)`. T
 - Ignore known noise, such as analytics or telemetry endpoints (`/rum`, `/collect`, `/analytics`) returning errors, unless the brief is about them.
 - If the work is yours to fix (code in this session), fix it, deploy or preview it the way the project does, then run **a new round**: back to step 2 with a fresh brief that says what changed and re-tests only what failed plus a short smoke check.
 - Stop after **3 rounds** without a pass and hand back to the user with what you learned.
+- Verdict `blocked` with reason `permission` and a "Permission denied … on this domain" note means the extension isn't allowed to act on that site. Ask the user to allow the domain in the Claude in Chrome extension's site permissions, not in the tester's chat (typing approval there doesn't change the extension). Then start a new round.
 - Verdict `blocked` with reason `login` means the user must sign in to that site in their Chrome once. Ask them to, then start a new round.
 
 ## 7. Clean up

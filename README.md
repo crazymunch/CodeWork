@@ -48,7 +48,9 @@ That creates `~/claude-tester` with:
 - `.claude/settings.json`, which pre-allows the Claude in Chrome tools (no browser permission prompts) and denies file edits;
 - `.claude/skills/browser-tester`.
 
-Serving a dedicated folder rather than your home directory keeps the trust prompt saved and keeps testers away from your files. Leave the terminal running. It shows up to lead agents as a `bridge` environment named `<host>:<user>:<id>`.
+Serving a dedicated folder rather than your home directory keeps the trust prompt saved and keeps testers away from your files. In Chrome, open the Claude extension's settings and set every site you will test to always allowed, sign-in redirects included. Extension site permissions are separate from Claude Code's. Without them a tester can read pages but cannot click, scroll or take screenshots.
+
+Leave the terminal running. It shows up to lead agents as a `bridge` environment named `<host>:<user>:<id>`.
 
 ### 2. Give the lead agent the `delegate-browser-test` skill
 
