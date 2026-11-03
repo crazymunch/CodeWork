@@ -1,0 +1,11 @@
+{
+  "name": "codework",
+  "owner": { "name": "crazymunch" },
+  "plugins": [
+    {
+      "name": "codework-handoff",
+      "source": "./",
+      "description": "Delegate browser tests from a Code agent to a tester agent in your real Chrome."
+    }
+  ]
+}

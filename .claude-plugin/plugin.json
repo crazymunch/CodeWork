@@ -1,0 +1,7 @@
+{
+  "name": "codework-handoff",
+  "version": "0.1.0",
+  "description": "Lets a Claude Code agent hand browser tests to a tester agent driving your real Chrome, and read its findings back.",
+  "author": { "name": "crazymunch" },
+  "repository": "https://github.com/crazymunch/CodeWork"
+}

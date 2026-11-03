@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude-in-chrome"
+    ],
+    "deny": [
+      "Edit",
+      "Write",
+      "NotebookEdit"
+    ]
+  }
+}
